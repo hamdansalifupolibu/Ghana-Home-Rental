@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Property - GhanaRentals</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background: rgba(0, 0, 0, 0.2) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .navbar-brand i {
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-radius: 8px;
+            margin: 0 5px;
+            padding: 8px 15px !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            color: white !important;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin: 30px auto;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-weight: 800;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 15px 20px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #e67e22;
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+        }
+
+        .btn {
+            border-radius: 12px;
+            padding: 15px 30px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            box-shadow: 0 8px 20px rgba(230, 126, 34, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(230, 126, 34, 0.4);
+        }
+
+        .btn-outline-secondary {
+            border: 2px solid #6c757d;
+            color: #6c757d;
+        }
+
+        .btn-outline-secondary:hover {
+            background: #6c757d;
+            color: white;
+        }
+
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .image-preview-item {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+
+        .image-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .image-preview-item .delete-checkbox {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .image-upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .image-upload-area:hover {
+            border-color: #e67e22;
+            background: #fff;
+        }
+
+        .image-upload-area i {
+            font-size: 3rem;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+
+        .floating-house {
+            position: fixed;
+            font-size: 8rem;
+            opacity: 0.05;
+            color: white;
+            z-index: -1;
+        }
+
+        .house-1 { top: 10%; left: 10%; animation: float 6s ease-in-out infinite; }
+        .house-2 { top: 60%; right: 10%; animation: float 8s ease-in-out infinite 1s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .floating-house {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating decorative elements -->
+    <div class="floating-house house-1">
+        <i class="fas fa-home"></i>
+    </div>
+    <div class="floating-house house-2">
+        <i class="fas fa-building"></i>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-home"></i> GhanaRentals
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/admin/landlord/dashboard">
+                    <i class="fas fa-arrow-left me-1"></i>Back to Dashboard
+                </a>
+                <a class="nav-link" href="/auth/logout">
+                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-container">
+            <h1 class="text-center">Edit Property</h1>
+            <p class="text-center text-muted mb-5">Update your property listing information</p>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} mb-4">
+                            <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" enctype="multipart/form-data" id="editPropertyForm">
+                <!-- Basic Information -->
+                <div class="mb-5">
+                    <h4 class="mb-4"><i class="fas fa-info-circle me-2 text-primary"></i>Basic Information</h4>
+
+                    <div class="mb-3">
+                        <label class="form-label">Property Title *</label>
+                        <input type="text" class="form-control" name="title" value="{{ property.title }}" required
+                               placeholder="e.g., Beautiful 2-Bedroom Apartment in Airport Residential">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="4"
+                                  placeholder="Describe the property features, amenities, and unique selling points...">{{ property.description }}</textarea>
+                        <div class="form-text">Detailed descriptions attract more tenants</div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Region *</label>
+                                <select class="form-select" name="region_id" required>
+                                    <option value="">Select Region</option>
+                                    {% for region in regions %}
+                                        <option value="{{ region.id }}" {% if region.id == property.region_id %}selected{% endif %}>{{ region.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Neighborhood *</label>
+                                <select class="form-select" name="neighborhood_id" required>
+                                    <option value="">Select Neighborhood</option>
+                                    {% for neighborhood in neighborhoods %}
+                                        <option value="{{ neighborhood.id }}" {% if neighborhood.id == property.neighborhood_id %}selected{% endif %}>{{ neighborhood.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Property Details -->
+                <div class="mb-5">
+                    <h4 class="mb-4"><i class="fas fa-home me-2 text-primary"></i>Property Details</h4>
+
+                    <div class="mb-3">
+                        <label class="form-label">Exact Location</label>
+                        <input type="text" class="form-control" name="exact_location" value="{{ property.exact_location }}"
+                               placeholder="e.g., Near Accra Mall, House Number 25">
+                        <div class="form-text">Specific address helps tenants find the property easily</div>
+                    </div>
+
+                    <!-- Updated Property Type to match add_property.html -->
+                    <div class="mb-3">
+                        <label class="form-label">Property Type *</label>
+                        <select class="form-select" name="property_type" required id="property_type">
+                            <option value="">Select Type</option>
+                            <option value="single_room" {% if property.property_type == 'single_room' %}selected{% endif %}>Single Room</option>
+                            <option value="self_contained" {% if property.property_type == 'self_contained' %}selected{% endif %}>Self Contained</option>
+                            <option value="chamber_hall" {% if property.property_type == 'chamber_hall' %}selected{% endif %}>Chamber & Hall</option>
+                            <option value="2_bedroom" {% if property.property_type == '2_bedroom' %}selected{% endif %}>2 Bedroom</option>
+                            <option value="3_bedroom" {% if property.property_type == '3_bedroom' %}selected{% endif %}>3 Bedroom</option>
+                            <option value="store" {% if property.property_type == 'store' %}selected{% endif %}>Store</option>
+                            <option value="apartment" {% if property.property_type == 'apartment' %}selected{% endif %}>Apartment</option>
+                        </select>
+                    </div>
+
+                    <!-- Updated Completion Status to match add_property.html -->
+                    <div class="mb-3">
+                        <label class="form-label">Completion Status *</label>
+                        <select class="form-select" name="completion_status" required id="completion_status">
+                            <option value="">Select Status</option>
+                            <option value="50_70_percent" {% if property.completion_status == '50_70_percent' %}selected{% endif %}>50-70% Complete</option>
+                            <option value="100_percent_ready" {% if property.completion_status == '100_percent_ready' %}selected{% endif %}>100% Ready</option>
+                            <option value="x_months_left" {% if property.completion_status == 'x_months_left' %}selected{% endif %}>X Months Left</option>
+                        </select>
+                    </div>
+
+                    <!-- Months Left Field (Conditional) -->
+                    <div class="mb-3" id="months_left_container" style="display: {% if property.completion_status == 'x_months_left' %}block{% else %}none{% endif %};">
+                        <label class="form-label">Months Left</label>
+                        <input type="number" class="form-control" name="months_left" value="{{ property.months_left or '' }}" min="1"
+                               placeholder="e.g., 3">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Monthly Price (GHS) *</label>
+                        <input type="number" class="form-control" name="price" value="{{ property.price }}" required step="0.01"
+                               placeholder="e.g., 1500.00">
+                        <div class="form-text">Competitive pricing attracts more inquiries</div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="mb-5">
+                    <h4 class="mb-4"><i class="fas fa-phone me-2 text-primary"></i>Contact Information</h4>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Contact Person Name *</label>
+                                <input type="text" class="form-control" name="contact_name" value="{{ property.contact_name }}" required
+                                       placeholder="e.g., John Smith">
+                                <div class="form-text">The person to contact about this property</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Contact Phone *</label>
+                                <input type="tel" class="form-control" name="contact_phone" value="{{ property.contact_phone }}" required
+                                       placeholder="e.g., +233 24 123 4567">
+                                <div class="form-text">Include country code (+233 for Ghana)</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label">Contact Email</label>
+                                <input type="email" class="form-control" name="contact_email" value="{{ property.contact_email or '' }}"
+                                       placeholder="e.g., landlord@example.com">
+                                <div class="form-text">Optional email address</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        This contact information will be displayed on the property details page for potential tenants to reach out directly. Ensure it's accurate and up-to-date.
+                    </div>
+                </div>
+
+                <!-- Property Images -->
+                <div class="mb-5">
+                    <h4 class="mb-4"><i class="fas fa-images me-2 text-primary"></i>Property Images</h4>
+
+                    <!-- Existing Images -->
+                    {% if property.image_paths and property.image_paths|length > 0 %}
+                        <div class="mb-4">
+                            <label class="form-label">Current Images (Click to delete)</label>
+                            <div class="image-preview">
+                                {% for image in property.image_paths %}
+                                    <div class="image-preview-item">
+                                        <img src="/static/uploads/{{ image }}" alt="Property Image">
+                                        <div class="delete-checkbox">
+                                            <input type="checkbox" name="delete_images" value="{{ image }}"
+                                                   onchange="this.parentNode.style.opacity = this.checked ? '0.5' : '1'">
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="form-text">Check the images you want to delete</div>
+                        </div>
+                    {% endif %}
+
+                    <!-- New Image Upload -->
+                    <div class="image-upload-area" onclick="document.getElementById('images').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h5>Add More Images</h5>
+                        <p class="text-muted">Drag & Drop or click to browse files</p>
+                        <input type="file" id="images" name="images" multiple accept="image/*" style="display: none;"
+                               onchange="previewNewImages(this)">
+                    </div>
+                    <div class="form-text mt-2">
+                        You can select multiple images. Supported formats: JPG, PNG, GIF, WebP.
+                    </div>
+                    <div id="new-image-preview" class="mt-3"></div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="d-flex justify-content-between">
+                    <a href="/admin/landlord/dashboard" class="btn btn-outline-secondary">
+                        <i class="fas fa-times me-2"></i>Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-2"></i>Update Property
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function previewNewImages(input) {
+            const preview = document.getElementById('new-image-preview');
+
+            if (input.files) {
+                const files = Array.from(input.files);
+                files.forEach((file, index) => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.maxWidth = '150px';
+                        img.style.maxHeight = '150px';
+                        img.style.objectFit = 'cover';
+                        img.style.margin = '5px';
+                        img.style.borderRadius = '8px';
+                        preview.appendChild(img);
+                    }
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+
+        // Drag and drop functionality
+        const dropArea = document.querySelector('.image-upload-area');
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dropArea.style.borderColor = '#e67e22';
+            dropArea.style.background = '#fff';
+        }
+
+        function unhighlight() {
+            dropArea.style.borderColor = '#dee2e6';
+            dropArea.style.background = '#f8f9fa';
+        }
+
+        dropArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            document.getElementById('images').files = files;
+            previewNewImages(document.getElementById('images'));
+        }
+
+        // Show months left field only when "X Months Left" is selected
+        document.getElementById('completion_status').addEventListener('change', function() {
+            const monthsContainer = document.getElementById('months_left_container');
+            if (this.value === 'x_months_left') {
+                monthsContainer.style.display = 'block';
+            } else {
+                monthsContainer.style.display = 'none';
+            }
+        });
+
+        // Phone number formatting
+        document.getElementById('editPropertyForm').addEventListener('input', function(e) {
+            if (e.target.name === 'contact_phone') {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.startsWith('233')) {
+                    value = '+' + value;
+                } else if (value.startsWith('0')) {
+                    value = '+233' + value.substring(1);
+                }
+                e.target.value = value;
+            }
+        });
+
+        // Real-time form validation
+        const formInputs = document.querySelectorAll('#editPropertyForm input, #editPropertyForm select, #editPropertyForm textarea');
+        formInputs.forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.checkValidity()) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                } else {
+                    this.classList.remove('is-valid');
+                    this.classList.add('is-invalid');
+                }
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

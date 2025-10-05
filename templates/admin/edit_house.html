@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit House - GhanaRentals Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Modern Navigation Header */
+        .admin-nav {
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.95) 0%, rgba(52, 73, 94, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(135deg, #e67e22, #f39c12, #e74c3c);
+            border-image-slice: 1;
+            margin-bottom: 40px;
+            padding: 15px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-nav::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .admin-nav:hover::before {
+            left: 100%;
+        }
+
+        .nav-brand {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-brand:hover {
+            transform: translateY(-2px);
+        }
+
+        .brand-icon {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            text-decoration: none;
+            padding: 12px 20px !important;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            color: white !important;
+        }
+
+        .nav-icon {
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover .nav-icon {
+            transform: scale(1.2);
+        }
+
+        .nav-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover .nav-indicator {
+            width: 80%;
+        }
+
+        /* Main Content Styles */
+        .dashboard-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin: 0 auto;
+            max-width: 1200px;
+        }
+
+        /* Beautiful Page Header Styles */
+        .page-header {
+            margin-bottom: 40px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid rgba(0,0,0,0.08);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 40px;
+            width: 100%;
+        }
+
+        .title-section {
+            flex: 1;
+        }
+
+        .page-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0 0 10px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .house-info-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            min-width: 200px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .house-info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .house-icon {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .house-id {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .house-label {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Form Styles */
+        .edit-form-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f8f9fa;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title i {
+            color: #667eea;
+        }
+
+        .form-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .form-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-color: #667eea;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-label i {
+            color: #667eea;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .form-control:disabled {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .form-text {
+            font-size: 0.85rem;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .form-check-input {
+            border-radius: 6px;
+            border: 2px solid #dee2e6;
+            margin-right: 10px;
+        }
+
+        .form-check-input:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+
+        .form-check-label {
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        /* Image Styles */
+        .image-preview-card {
+            border: 2px dashed #dee2e6;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .image-preview-card:hover {
+            border-color: #667eea;
+        }
+
+        .current-image {
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Button Styles */
+        .btn-action {
+            border: none;
+            border-radius: 12px;
+            padding: 12px 30px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(149, 165, 166, 0.4);
+            color: white;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+
+        .admin-alert {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #2196f3;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav-link {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 25px;
+                text-align: center;
+            }
+
+            .page-title {
+                font-size: 2.2rem;
+                justify-content: center;
+            }
+
+            .house-info-card {
+                min-width: 160px;
+            }
+
+            .edit-form-container {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body class="admin-dashboard">
+    <!-- Modern Navigation Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark admin-nav">
+        <div class="container">
+            <!-- Brand -->
+            <a class="navbar-brand nav-brand" href="/">
+                <i class="fas fa-home brand-icon"></i>
+                GhanaRentals
+            </a>
+
+            <!-- Navigation Menu -->
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/dashboard">
+                        <i class="fas fa-tachometer-alt nav-icon"></i>
+                        Dashboard
+                        <span class="nav-indicator"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/add-house">
+                        <i class="fas fa-plus-circle nav-icon"></i>
+                        Add House
+                        <span class="nav-indicator"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/admin/manage-houses">
+                        <i class="fas fa-edit nav-icon"></i>
+                        Manage Houses
+                        <span class="nav-indicator"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/manage-users">
+                        <i class="fas fa-users nav-icon"></i>
+                        Manage Users
+                        <span class="nav-indicator"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/auth/logout">
+                        <i class="fas fa-sign-out-alt nav-icon"></i>
+                        Logout
+                        <span class="nav-indicator"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="dashboard-container">
+            <!-- Beautiful Page Header -->
+            <div class="page-header">
+                <div class="header-content">
+                    <div class="title-section">
+                        <h1 class="page-title">
+                            <i class="fas fa-home me-3"></i>Edit House
+                        </h1>
+                        <p class="page-subtitle">Update property details for <strong>{{ house.title }}</strong></p>
+                    </div>
+                    <div class="stats-section">
+                        <div class="house-info-card">
+                            <div class="house-icon">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div class="count-content">
+                                <div class="house-id">{{ house.id }}</div>
+                                <div class="house-label">House ID</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} admin-alert">
+                            <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Edit House Form -->
+            <div class="edit-form-container">
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                        <!-- Property Information Section -->
+                        <div class="col-md-6">
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-info-circle"></i>Property Information
+                                </h3>
+                                <div class="form-card">
+                                    <div class="mb-4">
+                                        <label for="title" class="form-label">
+                                            <i class="fas fa-heading"></i>House Title *
+                                        </label>
+                                        <input type="text" class="form-control" id="title" name="title"
+                                               value="{{ house.title }}" required>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="description" class="form-label">
+                                            <i class="fas fa-align-left"></i>Description
+                                        </label>
+                                        <textarea class="form-control" id="description" name="description" rows="3">{{ house.description }}</textarea>
+                                        <small class="form-text">
+                                            <i class="fas fa-info-circle"></i>Describe the property features and amenities
+                                        </small>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="region_id" class="form-label">
+                                            <i class="fas fa-map"></i>Region *
+                                        </label>
+                                        <select class="form-control" id="region_id" name="region_id" required>
+                                            <option value="">Select Region</option>
+                                            {% for region in regions %}
+                                                <option value="{{ region.id }}"
+                                                    {% if region.id == house.region_id %}selected{% endif %}>
+                                                    {{ region.name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="neighborhood_id" class="form-label">
+                                            <i class="fas fa-map-marker-alt"></i>Neighborhood *
+                                        </label>
+                                        <select class="form-control" id="neighborhood_id" name="neighborhood_id" required>
+                                            <option value="">Select Neighborhood</option>
+                                            {% for neighborhood in neighborhoods %}
+                                                <option value="{{ neighborhood.id }}"
+                                                    {% if neighborhood.id == house.neighborhood_id %}selected{% endif %}>
+                                                    {{ neighborhood.name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Property Details Section -->
+                        <div class="col-md-6">
+                            <div class="form-section">
+                                <h3 class="section-title">
+                                    <i class="fas fa-cogs"></i>Property Details
+                                </h3>
+                                <div class="form-card">
+                                    <div class="mb-4">
+                                        <label for="exact_location" class="form-label">
+                                            <i class="fas fa-location-arrow"></i>Exact Location
+                                        </label>
+                                        <input type="text" class="form-control" id="exact_location" name="exact_location"
+                                               value="{{ house.exact_location or '' }}">
+                                        <small class="form-text">
+                                            <i class="fas fa-info-circle"></i>Specific address or landmarks
+                                        </small>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="property_type" class="form-label">
+                                            <i class="fas fa-home"></i>Property Type *
+                                        </label>
+                                        <select class="form-control" id="property_type" name="property_type" required>
+                                            <option value="">Select Type</option>
+                                            <option value="single_room" {% if house.property_type == 'single_room' %}selected{% endif %}>Single Room</option>
+                                            <option value="self_contained" {% if house.property_type == 'self_contained' %}selected{% endif %}>Self Contained</option>
+                                            <option value="chamber_hall" {% if house.property_type == 'chamber_hall' %}selected{% endif %}>Chamber & Hall</option>
+                                            <option value="2_bedroom" {% if house.property_type == '2_bedroom' %}selected{% endif %}>2 Bedroom</option>
+                                            <option value="3_bedroom" {% if house.property_type == '3_bedroom' %}selected{% endif %}>3 Bedroom</option>
+                                            <option value="store" {% if house.property_type == 'store' %}selected{% endif %}>Store</option>
+                                            <option value="apartment" {% if house.property_type == 'apartment' %}selected{% endif %}>Apartment</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="completion_status" class="form-label">
+                                            <i class="fas fa-tasks"></i>Completion Status *
+                                        </label>
+                                        <select class="form-control" id="completion_status" name="completion_status" required>
+                                            <option value="">Select Status</option>
+                                            <option value="50_70_percent" {% if house.completion_status == '50_70_percent' %}selected{% endif %}>50-70% Complete</option>
+                                            <option value="100_percent_ready" {% if house.completion_status == '100_percent_ready' %}selected{% endif %}>100% Ready</option>
+                                            <option value="x_months_left" {% if house.completion_status == 'x_months_left' %}selected{% endif %}>X Months Left</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-4" id="months_left_container"
+                                         style="display: {% if house.completion_status == 'x_months_left' %}block{% else %}none{% endif %};">
+                                        <label for="months_left" class="form-label">
+                                            <i class="fas fa-calendar"></i>Months Left
+                                        </label>
+                                        <input type="number" class="form-control" id="months_left" name="months_left"
+                                               value="{{ house.months_left or '' }}" min="1">
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="price" class="form-label">
+                                            <i class="fas fa-tag"></i>Price (GHS) *
+                                        </label>
+                                        <input type="number" class="form-control" id="price" name="price"
+                                               value="{{ house.price }}" step="0.01" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contact Information Section -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-address-book"></i>Contact Information
+                        </h3>
+                        <div class="form-card">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-4">
+                                        <label for="contact_name" class="form-label">
+                                            <i class="fas fa-user"></i>Contact Person Name *
+                                        </label>
+                                        <input type="text" class="form-control" id="contact_name" name="contact_name"
+                                               value="{{ house.contact_name if house.contact_name else '' }}"
+                                               placeholder="e.g., John Smith" required>
+                                        <small class="form-text">
+                                            <i class="fas fa-info-circle"></i>The person to contact about this property
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-4">
+                                        <label for="contact_phone" class="form-label">
+                                            <i class="fas fa-phone"></i>Contact Phone *
+                                        </label>
+                                        <input type="tel" class="form-control" id="contact_phone" name="contact_phone"
+                                               value="{{ house.contact_phone if house.contact_phone else '' }}"
+                                               placeholder="e.g., +233 24 123 4567" required>
+                                        <small class="form-text">
+                                            <i class="fas fa-info-circle"></i>Include country code (+233 for Ghana)
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-4">
+                                        <label for="contact_email" class="form-label">
+                                            <i class="fas fa-envelope"></i>Contact Email
+                                        </label>
+                                        <input type="email" class="form-control" id="contact_email" name="contact_email"
+                                               value="{{ house.contact_email if house.contact_email else '' }}"
+                                               placeholder="e.g., landlord@example.com">
+                                        <small class="form-text">
+                                            <i class="fas fa-info-circle"></i>Optional email address
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="info-card">
+                                <i class="fas fa-info-circle me-2"></i>
+                                This contact information will be displayed on the property details page
+                                for potential tenants to reach out directly.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image Upload Section -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-images"></i>Property Images
+                        </h3>
+                        <div class="form-card">
+                            <!-- Current Images -->
+                            {% if house.image_paths and house.image_paths[0] != 'house_placeholder.jpg' %}
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    <i class="fas fa-image"></i>Current Images
+                                </label>
+                                <div class="row">
+                                    {% for image_path in house.image_paths %}
+                                    <div class="col-md-3 mb-3">
+                                        <div class="image-preview-card">
+                                            <img src="{{ url_for('static', filename='uploads/' + image_path) }}"
+                                                 class="current-image w-100 mb-2"
+                                                 onerror="this.src='https://via.placeholder.com/300x200?text=Image+Not+Found'">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                       name="delete_images" value="{{ image_path }}"
+                                                       id="delete_{{ loop.index }}">
+                                                <label class="form-check-label" for="delete_{{ loop.index }}">
+                                                    <i class="fas fa-trash me-1"></i>Delete
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <!-- New Image Upload -->
+                            <div class="mb-3">
+                                <label for="images" class="form-label">
+                                    <i class="fas fa-upload"></i>Add New Images
+                                </label>
+                                <input type="file" class="form-control" id="images" name="images"
+                                       multiple accept="image/*">
+                                <small class="form-text">
+                                    <i class="fas fa-info-circle"></i>
+                                    You can select multiple images. Supported formats: JPG, PNG, GIF, WebP.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Featured Property Option -->
+                    <div class="form-section">
+                        <div class="form-card">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="is_featured" name="is_featured" value="1"
+                                       {% if house.is_featured %}checked{% endif %}>
+                                <label class="form-check-label" for="is_featured">
+                                    <i class="fas fa-star me-2"></i>
+                                    <strong>Feature this property</strong> - Show this house prominently on the homepage
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="/admin/manage-houses" class="btn-action btn-cancel me-md-3">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn-action btn-primary-custom">
+                            <i class="fas fa-save"></i> Update House
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Show months left field only when "X Months Left" is selected
+        document.getElementById('completion_status').addEventListener('change', function() {
+            const monthsContainer = document.getElementById('months_left_container');
+            if (this.value === 'x_months_left') {
+                monthsContainer.style.display = 'block';
+            } else {
+                monthsContainer.style.display = 'none';
+            }
+        });
+
+        // Phone number formatting (optional enhancement)
+        document.getElementById('contact_phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.startsWith('233')) {
+                value = '+' + value;
+            } else if (value.startsWith('0')) {
+                value = '+233' + value.substring(1);
+            }
+            e.target.value = value;
+        });
+    </script>
+</body>
+</html>

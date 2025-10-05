@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users - GhanaRentals Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Link to your external CSS file -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <style>
+        .admin-dashboard {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+
+        /* Modern Navigation Header */
+        .admin-nav {
+            background: linear-gradient(135deg, rgba(44, 62, 80, 0.95) 0%, rgba(52, 73, 94, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(135deg, #e67e22, #f39c12, #e74c3c);
+            border-image-slice: 1;
+            margin-bottom: 40px;
+            padding: 15px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-nav::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .admin-nav:hover::before {
+            left: 100%;
+        }
+
+        .nav-brand {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-brand:hover {
+            transform: translateY(-2px);
+        }
+
+        .brand-icon {
+            font-size: 2rem;
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9) !important;
+            text-decoration: none;
+            padding: 12px 20px !important;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            color: white !important;
+        }
+
+        .nav-icon {
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover .nav-icon {
+            transform: scale(1.2);
+        }
+
+        .nav-indicator {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: linear-gradient(135deg, #e67e22, #f39c12);
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover .nav-indicator {
+            width: 80%;
+        }
+
+        /* Main Content Styles */
+        .dashboard-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin: 0 auto;
+            max-width: 1400px;
+        }
+
+        /* UPDATED: Beautiful Page Header Styles */
+        .page-header {
+            margin-bottom: 40px;
+            padding-bottom: 25px;
+            border-bottom: 2px solid rgba(0,0,0,0.08);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 40px;
+            width: 100%;
+        }
+
+        .title-section {
+            flex: 1;
+        }
+
+        .page-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0 0 10px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .stats-section {
+            flex-shrink: 0;
+        }
+
+        .user-count-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            min-width: 180px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .user-count-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .count-icon {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .count-number {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: white;
+            line-height: 1;
+            margin-bottom: 5px;
+        }
+
+        .count-label {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .admin-alert {
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* Table Styles */
+        .users-table {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            border: none;
+        }
+
+        .table-header th {
+            border: none;
+            padding: 20px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .table-body td {
+            padding: 18px 20px;
+            vertical-align: middle;
+            border-color: #f1f2f6;
+        }
+
+        .user-role-badge {
+            font-size: 0.8em;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .role-admin {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .role-landlord {
+            background: linear-gradient(135deg, #27ae60, #229954);
+            color: white;
+        }
+
+        .role-tenant {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .current-user-badge {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .table-actions {
+            white-space: nowrap;
+        }
+
+        .action-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 8px 12px;
+            transition: all 0.3s ease;
+            margin: 0 2px;
+        }
+
+        .action-btn.edit {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .action-btn.delete {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .action-btn:disabled {
+            background: #95a5a6;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .action-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            border: none;
+            border-radius: 12px;
+            padding: 12px 25px;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(149, 165, 166, 0.3);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(149, 165, 166, 0.4);
+            color: white;
+        }
+
+        .no-users-card {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .no-users-icon {
+            font-size: 4rem;
+            color: #bdc3c7;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-menu {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav-link {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 25px;
+                text-align: center;
+            }
+
+            .page-title {
+                font-size: 2.2rem;
+                justify-content: center;
+            }
+
+            .user-count-card {
+                min-width: 160px;
+            }
+
+            .table-responsive {
+                border-radius: 15px;
+            }
+        }
+    </style>
+</head>
+<body class="admin-dashboard">
+    <!-- Modern Navigation Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark admin-nav">
+        <div class="container">
+            <!-- Brand -->
+            <a class="navbar-brand nav-brand" href="/">
+                <i class="fas fa-home brand-icon"></i>
+                GhanaRentals
+            </a>
+
+            <!-- Navigation Menu -->
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/dashboard">
+                        <i class="fas fa-tachometer-alt nav-icon"></i>
+                        Dashboard
+                        <span class="nav-indicator"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin/manage-houses">
+                        <i class="fas fa-edit nav-icon"></i>
+                        Manage Houses
+                        <span class="nav-indicator"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/admin/manage-users">
+                        <i class="fas fa-users nav-icon"></i>
+                        Manage Users
+                        <span class="nav-indicator"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/auth/logout">
+                        <i class="fas fa-sign-out-alt nav-icon"></i>
+                        Logout
+                        <span class="nav-indicator"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="dashboard-container">
+            <!-- UPDATED: Beautiful Page Header -->
+            <div class="page-header">
+                <div class="header-content">
+                    <div class="title-section">
+                        <h1 class="page-title">
+                            <i class="fas fa-users me-3"></i>User Management
+                        </h1>
+                        <p class="page-subtitle">Manage all registered users and their permissions</p>
+                    </div>
+                    <div class="stats-section">
+                        <div class="user-count-card">
+                            <div class="count-icon">
+                                <i class="fas fa-user-friends"></i>
+                            </div>
+                            <div class="count-content">
+                                <div class="count-number">{{ users|length }}</div>
+                                <div class="count-label">Total Users</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }} admin-alert">
+                            <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }} me-2"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            {% if users %}
+            <div class="table-responsive">
+                <table class="table table-hover users-table">
+                    <thead class="table-header">
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Full Name</th>
+                            <th>Role</th>
+                            <th>Phone</th>
+                            <th>Registered</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-body">
+                        {% for user in users %}
+                        <tr>
+                            <td><strong>{{ user.id }}</strong></td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <strong>{{ user.username }}</strong>
+                                    {% if user.id == session.user_id %}
+                                        <span class="current-user-badge">You</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.full_name }}</td>
+                            <td>
+                                <span class="badge user-role-badge
+                                    {% if user.role == 'admin' %}role-admin
+                                    {% elif user.role == 'landlord' %}role-landlord
+                                    {% else %}role-tenant{% endif %}">
+                                    {{ user.role|title }}
+                                </span>
+                            </td>
+                            <td>{{ user.phone or '-' }}</td>
+                            <td>
+                                <small class="text-muted">{{ user.created_at.strftime('%Y-%m-%d') }}</small>
+                            </td>
+                            <td>
+                                {% if user.is_active %}
+                                    <span class="badge status-badge bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge status-badge bg-secondary">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td class="table-actions">
+                                <div class="btn-group">
+                                    <a href="{{ url_for('admin.edit_user', user_id=user.id) }}"
+                                       class="btn action-btn edit" title="Edit User">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    {% if user.id != session.user_id %}
+                                    <form method="POST"
+                                          action="{{ url_for('admin.delete_user', user_id=user.id) }}"
+                                          onsubmit="return confirm('Are you sure you want to delete {{ user.username }}? This action cannot be undone.');"
+                                          style="display: inline;">
+                                        <button type="submit" class="btn action-btn delete" title="Delete User">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <button class="btn action-btn" disabled title="Cannot delete yourself">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-users-card">
+                <div class="no-users-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="text-muted mb-3">No Users Found</h3>
+                <p class="text-muted">There are no users registered in the system yet.</p>
+            </div>
+            {% endif %}
+
+            <div class="mt-4">
+                <a href="/admin/dashboard" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Quick filter functionality
+        function filterUsers() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toLowerCase();
+            const table = document.querySelector('table');
+            const tr = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < tr.length; i++) {
+                const td = tr[i].getElementsByTagName('td');
+                let show = false;
+
+                for (let j = 0; j < td.length; j++) {
+                    if (td[j]) {
+                        if (td[j].textContent.toLowerCase().indexOf(filter) > -1) {
+                            show = true;
+                            break;
+                        }
+                    }
+                }
+
+                tr[i].style.display = show ? '' : 'none';
+            }
+        }
+    </script>
+</body>
+</html>
