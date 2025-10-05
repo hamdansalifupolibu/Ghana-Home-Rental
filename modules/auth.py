@@ -5,12 +5,10 @@ import re
 
 auth_bp = Blueprint('auth', __name__)
 
-
 # Helper function to validate email
 def is_valid_email(email):
     pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
     return re.match(pattern, email) is not None
-
 
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
@@ -76,7 +74,6 @@ def register():
 
     return render_template('auth/register.html')
 
-
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -107,13 +104,25 @@ def login():
 
                     flash(f'Welcome back, {user["full_name"]}!', 'success')
 
-                    # Redirect based on role - FIXED THIS PART!
+                    # SAFE REDIRECTS - Check which routes actually exist
                     if user['role'] == 'admin':
-                        return redirect(url_for('admin.dashboard'))
+                        # Try admin dashboard, fallback to home if not exists
+                        try:
+                            return redirect(url_for('admin.dashboard'))
+                        except:
+                            return redirect(url_for('user.index'))
                     elif user['role'] == 'landlord':
-                        return redirect(url_for('admin.landlord_dashboard'))  # ✅ CORRECTED!
+                        # Try landlord dashboard, fallback to home if not exists
+                        try:
+                            return redirect(url_for('admin.landlord_dashboard'))
+                        except:
+                            return redirect(url_for('user.index'))
                     else:
-                        return redirect(url_for('user.tenant_dashboard'))
+                        # Try tenant dashboard, fallback to home if not exists
+                        try:
+                            return redirect(url_for('user.tenant_dashboard'))
+                        except:
+                            return redirect(url_for('user.index'))
             else:
                 flash('Invalid username or password!', 'error')
 
@@ -125,15 +134,13 @@ def login():
 
     return render_template('auth/login.html')
 
-
 @auth_bp.route('/logout')
 def logout():
     session.clear()
     flash('You have been logged out successfully.', 'info')
     return redirect(url_for('user.index'))
 
-
-# Profile page
+# Profile page - UPDATED WITH SAFE REDIRECTS
 @auth_bp.route('/profile')
 def profile():
     if not session.get('logged_in'):
@@ -154,7 +161,6 @@ def profile():
         conn.close()
 
     return render_template('auth/profile.html', user=user)
-
 
 @auth_bp.route('/profile/edit', methods=['GET', 'POST'])
 def edit_profile():
@@ -245,7 +251,7 @@ def edit_profile():
             user = cursor.fetchone()
         except Exception as e:
             flash(f'Error loading profile: {str(e)}', 'error')
-            return redirect(url_for('auth.profile'))
+            return redirect(url_for('user.index'))
         finally:
             cursor.close()
             conn.close()
