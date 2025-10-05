@@ -727,4 +727,5 @@ def delete_user(user_id):
         cursor.close()
         conn.close()
 
+
     return redirect(url_for('admin.manage_users'))
