@@ -1,6 +1,10 @@
-from flask import Blueprint, render_template, request, session, flash, redirect, url_for
+from flask import Blueprint, render_template, request, session, flash, redirect, url_for, jsonify
 import json
+import random
+import logging
 from modules.database import get_db_connection
+
+user_bp = Blueprint('user', __name__)
 
 user_bp = Blueprint('user', __name__)
 
@@ -165,13 +169,7 @@ def tenant_dashboard():
 
 
 
-from flask import Blueprint, render_template, request, session, flash, redirect, url_for, jsonify
-import json
-import random
-import logging
-from modules.database import get_db_connection
 
-user_bp = Blueprint('user', __name__)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -449,3 +447,4 @@ Just tell me what you're looking for! 🏠"""
         'response': response, 
         'properties': properties[:3]  # Return max 3 properties to frontend
     })
+
