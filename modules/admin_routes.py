@@ -82,8 +82,138 @@ def save_uploaded_files(files, house_id):
 @admin_bp.route('/admin-dashboard')
 @admin_only
 def admin_dashboard():
-    """Admin-only dashboard"""
-    return render_template('admin/dashboard.html')
+    """Admin-only dashboard with user metrics"""
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    try:
+        # Total users count
+        cursor.execute("SELECT COUNT(*) as total_users FROM users")
+        total_users = cursor.fetchone()['total_users']
+
+        # Landlords count
+        cursor.execute("SELECT COUNT(*) as landlords_count FROM users WHERE role = 'landlord'")
+        landlords_count = cursor.fetchone()['landlords_count']
+
+        # Tenants count
+        cursor.execute("SELECT COUNT(*) as tenants_count FROM users WHERE role = 'tenant'")
+        tenants_count = cursor.fetchone()['tenants_count']
+
+        # Active vs inactive users
+        cursor.execute("SELECT COUNT(*) as active_users FROM users WHERE is_active = 1")
+        active_users = cursor.fetchone()['active_users']
+        inactive_users = total_users - active_users
+
+        # New signups this week
+        cursor.execute("""
+            SELECT COUNT(*) as weekly_signups 
+            FROM users 
+            WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+        """)
+        weekly_signups = cursor.fetchone()['weekly_signups']
+
+        # New signups this month
+        cursor.execute("""
+            SELECT COUNT(*) as monthly_signups 
+            FROM users 
+            WHERE created_at >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        """)
+        monthly_signups = cursor.fetchone()['monthly_signups']
+
+        # User retention rate (simplified and more accurate)
+        cursor.execute("""
+            SELECT COUNT(*) as retained_users
+            FROM users 
+            WHERE last_login >= DATE_SUB(NOW(), INTERVAL 30 DAY)
+            AND created_at <= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        """)
+        retained_users = cursor.fetchone()['retained_users']
+        
+        # Users who signed up more than 30 days ago
+        cursor.execute("""
+            SELECT COUNT(*) as old_users 
+            FROM users 
+            WHERE created_at <= DATE_SUB(NOW(), INTERVAL 30 DAY)
+        """)
+        old_users = cursor.fetchone()['old_users']
+        
+        retention_rate = (retained_users / old_users * 100) if old_users > 0 else 0
+
+        # Get total properties count for additional metrics
+        cursor.execute("SELECT COUNT(*) as total_properties FROM houses")
+        total_properties = cursor.fetchone()['total_properties']
+
+        # Get featured properties count
+        cursor.execute("SELECT COUNT(*) as featured_properties FROM houses WHERE is_featured = 1")
+        featured_properties = cursor.fetchone()['featured_properties']
+
+        # Get properties by type distribution
+        cursor.execute("""
+            SELECT property_type, COUNT(*) as count 
+            FROM houses 
+            GROUP BY property_type 
+            ORDER BY count DESC
+        """)
+        property_types = cursor.fetchall()
+
+        # Recent signups for the table
+        cursor.execute("""
+            SELECT username, email, role, created_at, is_active, last_login
+            FROM users 
+            ORDER BY created_at DESC 
+            LIMIT 10
+        """)
+        recent_signups = cursor.fetchall()
+
+        # Recent properties added
+        cursor.execute("""
+            SELECT h.title, h.created_at, u.username as created_by, r.name as region_name
+            FROM houses h
+            LEFT JOIN users u ON h.created_by = u.id
+            LEFT JOIN regions r ON h.region_id = r.id
+            ORDER BY h.created_at DESC 
+            LIMIT 5
+        """)
+        recent_properties = cursor.fetchall()
+
+        metrics = {
+            'total_users': total_users,
+            'landlords_count': landlords_count,
+            'tenants_count': tenants_count,
+            'active_users': active_users,
+            'inactive_users': inactive_users,
+            'weekly_signups': weekly_signups,
+            'monthly_signups': monthly_signups,
+            'retention_rate': round(retention_rate, 1),
+            'total_properties': total_properties,
+            'featured_properties': featured_properties,
+            'property_types': property_types,
+            'recent_signups': recent_signups,
+            'recent_properties': recent_properties
+        }
+
+    except Exception as e:
+        flash(f'Error loading metrics: {str(e)}', 'error')
+        metrics = {
+            'total_users': 0,
+            'landlords_count': 0,
+            'tenants_count': 0,
+            'active_users': 0,
+            'inactive_users': 0,
+            'weekly_signups': 0,
+            'monthly_signups': 0,
+            'retention_rate': 0,
+            'total_properties': 0,
+            'featured_properties': 0,
+            'property_types': [],
+            'recent_signups': [],
+            'recent_properties': []
+        }
+    finally:
+        cursor.close()
+        conn.close()
+
+    return render_template('admin/dashboard.html', users_count=metrics['total_users'], metrics=metrics)
 
 
 @admin_bp.route('/landlord-dashboard')
@@ -729,3 +859,4 @@ def delete_user(user_id):
 
 
     return redirect(url_for('admin.manage_users'))
+
